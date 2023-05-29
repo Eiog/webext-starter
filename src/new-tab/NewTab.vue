@@ -4,7 +4,7 @@
 
 <template>
   <div text-xl>
-    newTAB
+    newTAB12
   </div>
 </template>
 

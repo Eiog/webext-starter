@@ -17,18 +17,10 @@ function root(...paths: string[]): string {
 
 export default defineConfig(({ command, mode }) => {
   console.log(command, mode)
-  const isWeb = mode === 'web'
   return {
     build: {
       outDir: root('dist'),
       emptyOutDir: true,
-      rollupOptions: isWeb
-        ? {
-            input: {
-              main: resolve(__dirname, 'src/new-tab/index.html'),
-            },
-          }
-        : undefined,
     },
     plugins: [
       DefineOptions(),
@@ -85,12 +77,10 @@ export default defineConfig(({ command, mode }) => {
         fullInstall: true,
         include: resolve(__dirname, './src/locales/**'),
       }),
-      isWeb
-        ? null
-        : browserExtension({
-          manifest: 'src/manifest.json',
-          browser: process.env.TARGET ?? 'chrome',
-        }),
+      browserExtension({
+        manifest: 'src/manifest.json',
+        browser: process.env.TARGET ?? 'chrome',
+      }),
     ],
     resolve: {
       alias: {
