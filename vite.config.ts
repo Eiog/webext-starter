@@ -9,14 +9,13 @@ import AutoImport from 'unplugin-auto-import/vite'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import Icons from 'unplugin-icons/vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import DefineOptions from 'unplugin-vue-define-options/vite'
+import DefineOptions from 'unplugin-vue-define-options/dist/vite'
 
 function root(...paths: string[]): string {
   return path.resolve(__dirname, ...paths)
 }
 
 export default defineConfig(({ command, mode }) => {
-  console.log(command, mode)
   return {
     build: {
       outDir: root('dist'),

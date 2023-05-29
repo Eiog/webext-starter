@@ -21,6 +21,9 @@ devDependencies:
   '@eiog/eslint-config':
     specifier: ^0.0.1
     version: 0.0.1(eslint@8.41.0)(typescript@5.0.4)
+  '@eiog/ts-config':
+    specifier: ^0.0.3
+    version: 0.0.3
   '@iconify-json/ri':
     specifier: ^1.1.9
     version: 1.1.9
@@ -330,6 +333,10 @@ packages:
       - jest
       - supports-color
       - typescript
+    dev: true
+
+  /@eiog/ts-config@0.0.3:
+    resolution: {integrity: sha512-Y1FHTnAz4JipYZWWcCmhkoVHm+xuOMlUMIfpaIgcQEMktAN0aybTT+hWKSEUHI/iuNnKByl2iV5Au3KavpnDHA==}
     dev: true
 
   /@emotion/hash@0.8.0:
