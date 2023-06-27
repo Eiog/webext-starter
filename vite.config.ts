@@ -2,6 +2,7 @@ import path, { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import browserExtension from 'vite-plugin-web-extension'
 import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import Unocss from 'unocss/vite'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
@@ -9,7 +10,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import Icons from 'unplugin-icons/vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import DefineOptions from 'unplugin-vue-define-options/dist/vite'
+import WebfontDownload from 'vite-plugin-webfont-dl'
 
 function root(...paths: string[]): string {
   return path.resolve(__dirname, ...paths)
@@ -22,12 +23,18 @@ export default defineConfig(({ command, mode }) => {
       emptyOutDir: true,
     },
     plugins: [
-      DefineOptions(),
       createSvgIconsPlugin({
         iconDirs: [resolve(process.cwd(), 'src/assets/icons')],
         symbolId: 'icon-[dir]-[name]',
       }),
-      vue(),
+      vue({
+        script: {
+          defineModel: true,
+        },
+        include: [/\.vue$/, /\.md$/],
+      }),
+      vueJsx(),
+      WebfontDownload(),
       Icons({ compiler: 'vue3' }),
       // https://github.com/antfu/unplugin-auto-import
       AutoImport({
@@ -85,6 +92,12 @@ export default defineConfig(({ command, mode }) => {
       alias: {
         '~': resolve(__dirname, './src'), // 路径别名
         'vue-i18n': 'vue-i18n/dist/vue-i18n.runtime.esm-bundler.js',
+      },
+    },
+    css: {
+      modules: {
+        localsConvention: 'camelCase',
+        scopeBehaviour: 'local',
       },
     },
   }
