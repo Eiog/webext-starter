@@ -1,43 +1,47 @@
 <script setup lang="ts">
 import { defineComponent, h } from 'vue'
-import type {
-  GlobalTheme, GlobalThemeOverrides, NDateLocale,
-  zhCN,
-} from 'naive-ui'
+
 import {
   NDialogProvider,
   NLoadingBarProvider,
   NMessageProvider,
   NNotificationProvider,
   darkTheme,
+  dateEnUS,
+  dateZhCN,
+  enUS,
   useDialog,
   useLoadingBar,
   useMessage,
   useNotification,
+  zhCN,
 } from 'naive-ui'
 
 interface Props {
-  dark: boolean
-  themeOverrides?: GlobalThemeOverrides
-  locale?: typeof zhCN
-  dateLocale?: NDateLocale
+  locale?: string
+  dark?: boolean
 }
 const props = defineProps<Props>()
-const theme = ref<GlobalTheme | undefined>(undefined)
-onMounted(() => {
-  watch(
-    () => props.dark,
-    (dark) => {
-      if (dark) {
-        theme.value = darkTheme
-        document.body.classList.add('dark')
-        return
-      }
-      theme.value = undefined
-      document.body.classList.remove('dark')
-    },
-    { immediate: true },
-  )
+const theme = computed(() => props.dark ? darkTheme : undefined)
+const locale = computed(() => {
+  switch (props.locale) {
+    case 'en':
+      return enUS
+    case 'cn':
+      return zhCN
+    default:
+      return undefined
+  }
+})
+const dateLocale = computed(() => {
+  switch (props.locale) {
+    case 'en':
+      return dateEnUS
+    case 'cn':
+      return dateZhCN
+    default:
+      return undefined
+  }
 })
 // 挂载naive组件的方法至window, 以便在路由钩子函数和请求函数里面调用
 function registerNaiveTools() {
@@ -62,9 +66,8 @@ const NaiveProviderContent = defineComponent({
   <n-config-provider
     abstract
     :theme="theme"
-    :theme-overrides="props.themeOverrides"
-    :locale="props.locale"
-    :date-locale="props.dateLocale"
+    :locale="locale"
+    :date-locale="dateLocale"
   >
     <NLoadingBarProvider>
       <NDialogProvider>
