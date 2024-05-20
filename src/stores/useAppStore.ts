@@ -3,14 +3,17 @@ import { defineStore } from 'pinia'
 export const useAppStore = defineStore(
   'appStore',
   () => {
-    const darkMode = ref(false)
+    const { language, toggleLanguage } = useLanguage()
+    const { useDarkMode } = useNaiveTheme()
     return {
-      darkMode,
+      language,
+      toggleLanguage,
+      useDarkMode,
     }
   },
   {
     persist: {
-      key: '__AppStore__',
+      key: '__APP_STORE_PERSIST__',
       paths: [''],
     },
   },

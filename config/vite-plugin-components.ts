@@ -4,7 +4,6 @@ import {
   NaiveUiResolver,
   VueUseComponentsResolver,
   VueUseDirectiveResolver,
-  Vuetify3Resolver,
 } from 'unplugin-vue-components/resolvers'
 
 export function VitePluginComponents(): PluginOption[] {
@@ -16,7 +15,6 @@ export function VitePluginComponents(): PluginOption[] {
       include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
       resolvers: [
         NaiveUiResolver(),
-        Vuetify3Resolver(),
         VueUseComponentsResolver(),
         VueUseDirectiveResolver(),
       ],

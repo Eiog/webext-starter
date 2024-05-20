@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
-import { defineConfig } from 'vite'
+import process from 'node:process'
+import { defineConfig, loadEnv } from 'vite'
 import browserExtension, { readJsonFile } from 'vite-plugin-web-extension'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
@@ -9,31 +10,45 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import WebfontDownload from 'vite-plugin-webfont-dl'
 import postcssPresetEnv from 'postcss-preset-env'
 import VueDevTools from 'vite-plugin-vue-devtools'
+import TurboConsole from 'unplugin-turbo-console/vite'
+import Info from 'unplugin-info/vite'
 import { VitePluginAutoImport, VitePluginComponents, VitePluginI18n } from './config'
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
+  const { VITE_DEV_PORT, VITE_API_BASE_PREFIX, VITE_API_BASE_URL, VITE_BASE } = loadEnv(mode, process.cwd(), '')
+
   return {
     plugins: [
+      vue({
+        include: [/\.vue$/, /\.md$/],
+      }), // https://github.com/vitejs/vite-plugin-vue
+      vueJsx(), // https://github.com/vitejs/vite-plugin-vue
+      Unocss(), // https://github.com/antfu/unocss
+      Icons({ compiler: 'vue3' }), // https://github.com/antfu/unplugin-icons
       VueDevTools(), // https://devtools-next.vuejs.org/
       createSvgIconsPlugin({
         iconDirs: [resolve(process.cwd(), 'src/assets/icons')],
         symbolId: 'icon-[dir]-[name]',
-      }),
-      vue({
-        script: {
-          defineModel: true,
-        },
-        include: [/\.vue$/, /\.md$/],
-      }),
-      vueJsx(),
-      WebfontDownload(),
-      Icons({ compiler: 'vue3' }),
+      }), // https://github.com/vbenjs/vite-plugin-svg-icons
+      // vitePluginVersionMark({
+      //   // name: 'test-app',
+      //   // version: '0.0.1',
+      //   // command: 'git describe --tags',
+      //   ifGitSHA: true,
+      //   ifShortSHA: true,
+      //   ifMeta: true,
+      //   ifLog: true,
+      //   ifGlobal: true,
+      // }), // https://github.com/ZhongxuYang/vite-plugin-version-mark
 
-      Unocss(), // https://github.com/antfu/unocss
+      Info(), // https://github.com/yjl9903/unplugin-info
+      WebfontDownload(), // https://github.com/feat-agency/vite-plugin-webfont-dl
+      TurboConsole(), // https://github.com/unplugin/unplugin-turbo-console
       ...VitePluginAutoImport(),
       ...VitePluginComponents(),
       ...VitePluginI18n(),
       browserExtension({
+        skipManifestValidation: true,
         manifest: () => {
           const pkg = readJsonFile('package.json')
           const template = readJsonFile('src/manifest.json')
@@ -47,8 +62,23 @@ export default defineConfig(({ command, mode }) => {
         browser: process.env.TARGET ?? 'chrome',
       }),
     ],
-    build: {
-      emptyOutDir: true,
+    clearScreen: true,
+    base: VITE_BASE ?? '/',
+    server: {
+      port: Number(VITE_DEV_PORT),
+      host: true, // host设置为true才可以使用network的形式，以ip访问项目
+      open: false, // 自动打开浏览器
+      cors: true, // 跨域设置允许
+      strictPort: true, // 如果端口已占用直接退出
+      proxy: VITE_API_BASE_URL === ''
+        ? undefined
+        : {
+            [VITE_API_BASE_PREFIX]: {
+              target: VITE_API_BASE_URL,
+              changeOrigin: true,
+              rewrite: path => path.replace(new RegExp(`^${VITE_API_BASE_PREFIX}`), ''),
+            },
+          },
     },
     resolve: {
       alias: {

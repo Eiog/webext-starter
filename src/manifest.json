@@ -10,13 +10,13 @@
     "128": "icon/128.png"
   },
   "{{chrome}}.action": {
-    "default_popup": "src/popup/index.html"
+    "default_popup": "src/pages/popup/index.html"
   },
   "{{firefox}}.browser_action": {
-    "default_popup": "src/popup/index.html"
+    "default_popup": "src/pages/popup/index.html"
   },
   "chrome_url_overrides": {
-    "newtab": "src/new-tab/index.html"
+    "newtab": "src/pages/new-tab/index.html"
   },
   "content_scripts": [
     {
@@ -24,7 +24,7 @@
         "*://*/*"
       ],
       "js": [
-        "src/content-script/index.ts"
+        "src/content-script.ts"
       ]
     }
   ],
@@ -32,6 +32,7 @@
     "{{chrome}}.service_worker": "src/background.ts",
     "{{firefox}}.scripts": ["src/background.ts"]
   },
+  "options_page": "src/pages/options/index.html",
   "permissions": [
     "tabs",
     "{{firefox}}.<all_urls>",
